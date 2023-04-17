@@ -3,8 +3,9 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Order = require('../models/order');
 const Product = require('../models/product');
+const checkAuth = require('../middleware/auth');
 
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
   Order.find()
     .exec()
     .then((docs) => {
@@ -32,7 +33,7 @@ router.get('/', (req, res, next) => {
 
 const ObjectId = mongoose.Types.ObjectId;
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth, (req, res, next) => {
   // Ensure a valid ObjectId is provided
   if (!ObjectId.isValid(req.body.product)) {
     return res.status(400).json({ message: 'Invalid product ID' });
@@ -75,7 +76,7 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.get('/:orderId', (req, res, next) => {
+router.get('/:orderId', checkAuth, (req, res, next) => {
   const id = req.params.orderId;
   Order.findById(id)
     .exec()
@@ -100,7 +101,7 @@ router.get('/:orderId', (req, res, next) => {
     });
 });
 
-router.patch('/:orderId', (req, res, next) => {
+router.patch('/:orderId', checkAuth, (req, res, next) => {
   const id = req.params.orderId;
   Product.findByIdAndUpdate(id, req.body)
     .exec()
@@ -121,7 +122,7 @@ router.patch('/:orderId', (req, res, next) => {
     });
 });
 
-router.delete('/:orderId', async (req, res, next) => {
+router.delete('/:orderId', checkAuth, async (req, res, next) => {
   const id = req.params.orderId;
   if (id) {
     await Order.findByIdAndRemove({ _id: id })
