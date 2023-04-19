@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const bodyParser = require('body-parser');
 const Product = require('../models/product');
 const mongoose = require('mongoose');
 const { result } = require('lodash');
 
 router.get('/', (req, res, next) => {
-  console.log('First', res);
   Product.find()
-    .select('name price _id')
     .exec()
     .then((docs) => {
       const response = {
@@ -25,7 +22,6 @@ router.get('/', (req, res, next) => {
           };
         }),
       };
-      console.log(response);
       // if (docs.length >= 0) {
       res.status(200).json(response);
       // } else {
@@ -104,20 +100,17 @@ router.get('/:productId', (req, res, next) => {
 
 router.patch('/:productId', (req, res, next) => {
   const id = req.params.productId;
-  const updateOps = {};
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value;
-  }
-  Product.update(
-    { _id: id },
-    { $set: { name: req.body.newName, price: req.body.newPrice } }
-  )
+  // const updateOps = {};
+  // for (const ops of req.body) {
+  //   updateOps[ops.propName] = ops.value;
+  // }
+  Product.findByIdAndUpdate(id, req.body)
     .exec()
-    .then((result) => {
+    .then(() => {
       res.status(200).json({
         message: 'Product has been Updated',
         request: {
-          type: 'GET',
+          type: 'PATCH',
           url: 'http://localhost:3000/products/' + id,
         },
       });
@@ -130,22 +123,26 @@ router.patch('/:productId', (req, res, next) => {
     });
 });
 
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', async (req, res, next) => {
   const id = req.params.productId;
-  Product.remove({ _id: id })
-    .exec()
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        error: err,
+  if (id) {
+    await Product.findByIdAndRemove({ _id: id })
+      .exec()
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        res.status(500).json({
+          error: err.message,
+        });
       });
-    });
-  res.status(200).json({
-    message: 'Delete Products',
-  });
+  } else {
+    console.log('Id Not Found');
+  }
+
+  // res.status(200).json({
+  //   message: 'Product has been Deleted',
+  // });
 });
 
 module.exports = router;
