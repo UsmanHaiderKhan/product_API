@@ -1,0 +1,26 @@
+{
+  "name": "product_api",
+  "version": "1.0.0",
+  "description": "It is a API for shopping to add new products and then show on the MainPage of the Application.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "keywords": [
+    "node",
+    "Restfull",
+    "API"
+  ],
+  "author": "Usman Haider Khan",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.1.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
