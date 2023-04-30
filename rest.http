@@ -1,0 +1,24 @@
+
+### GET product Request
+GET http://localhost:3000/products
+Content-Type: application/json
+
+
+### POST Products Request
+
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "Penny",
+    "price": "12-euro"
+}
+
+### POST Order Request
+POST http://localhost:3000/orders
+Content-Type: application/json
+
+{
+    "productId": "1234",
+    "quantity": "2"
+}
