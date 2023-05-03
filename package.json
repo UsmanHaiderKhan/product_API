@@ -4,7 +4,7 @@
   "description": "It is a API for shopping to add new products and then show on the MainPage of the Application.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon server.js"
   },
   "keywords": [
     "node",
@@ -15,6 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "colors": "^1.4.0",
+    "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^7.1.0",
