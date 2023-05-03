@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const http = require('http');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 require('./helpers/connect_mongoose');
@@ -10,27 +9,27 @@ const mongoose = require('mongoose');
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
+app.use(morgan('dev'));
 mongoose.Promise = global.Promise;
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization '
+  );
 
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header(
-//     'Access-Control-Allow-Headers',
-//     'Origin, X-Requested-With, Content-Type, Accept, Authorization '
-//   );
-
-//   if (req.method === 'OPTIONS') {
-//     res.header('Access-Control-Allow-Methods', 'PUT,POST,PATCH,DELETE');
-//     return res.status(200).json({});
-//   }
-// });
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'PUT,POST,PATCH,DELETE');
+    return res.status(200).json({});
+  }
+  next();
+});
 
 app.use((req, res, next) => {
   const error = new Error('Not Found');
@@ -38,8 +37,13 @@ app.use((req, res, next) => {
   next(error);
 });
 
-const port = process.env.PORT || 3000;
-const server = http.createServer(app);
-server.listen(port);
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
+});
 
 module.exports = app;
