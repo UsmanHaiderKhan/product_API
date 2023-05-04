@@ -30,19 +30,29 @@ router.get('/', (req, res, next) => {
     });
 });
 
+const ObjectId = mongoose.Types.ObjectId;
+
 router.post('/', (req, res, next) => {
-  Product.findById(req.body.productId)
+  // Ensure a valid ObjectId is provided
+  if (!ObjectId.isValid(req.body.product)) {
+    return res.status(400).json({ message: "Invalid product ID" });
+  }
+
+  const productId = new ObjectId(req.body.product);
+
+  Product.findById(productId)
     .then((product) => {
       if (!product) {
         return res.status(404).json({
           message: 'Product not Found',
         });
       }
-      const order = {
-        _id: mongoose.Types.ObjectId(),
+      // Create a new instance of the Order model
+      const order = new Order({
+        _id: new mongoose.Types.ObjectId(),
         quantity: req.body.quantity,
-        product: req.body.productId,
-      };
+        product: productId,
+      });
       return order.save().then((result) => {
         res.status(201).json({
           message: 'Order Has Been Created',
@@ -65,6 +75,8 @@ router.post('/', (req, res, next) => {
       });
     });
 });
+
+
 
 router.get('/:orderId', (req, res, next) => {
   const id = req.params.orderId;
