@@ -38,11 +38,11 @@ router.post('/', (req, res, next) => {
           message: 'Product not Found',
         });
       }
-      const order = new Order({
+      const order = {
         _id: mongoose.Types.ObjectId(),
         quantity: req.body.quantity,
         product: req.body.productId,
-      });
+      };
       return order.save().then((result) => {
         res.status(201).json({
           message: 'Order Has Been Created',
@@ -61,7 +61,7 @@ router.post('/', (req, res, next) => {
     .catch((err) => {
       console.log(err);
       res.status(500).json({
-        error: err,
+        error: err.message,
       });
     });
 });
