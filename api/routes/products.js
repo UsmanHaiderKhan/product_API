@@ -35,13 +35,9 @@ router.get('/', (req, res, next) => {
         error: err,
       });
     });
-  res.status(200).json({
-    message: 'Products GET Request',
-  });
 });
 
 router.post('/', async (req, res, next) => {
-  console.log(req.body);
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -50,23 +46,26 @@ router.post('/', async (req, res, next) => {
   await product
     .save()
     .then((result) => {
-      console.log(result);
+      res.status(201).json({
+        message: 'Products Created Successfully',
+        createdProduct: {
+          name: result.name,
+          price: result.price,
+          _id: result._id,
+          request: {
+            type: 'GET',
+            url: 'http://localhost:3000/products/' + result._id,
+          },
+        },
+      });
     })
-    .catch((err) => console.log(err));
-
-  res.status(201).json({
-    message: 'Products Created Successfully',
-    createdProduct: {
-      name: result.name,
-      price: result.price,
-      _id: result._id,
-      request: {
-        type: 'GET',
-        url: 'http://localhost:3000/products/' + result._id,
-      },
-    },
-  });
-  next();
+    .catch((err) =>
+      res.status(500).json({
+        error: {
+          error: err.message,
+        },
+      })
+    );
 });
 
 router.get('/:productId', (req, res, next) => {
