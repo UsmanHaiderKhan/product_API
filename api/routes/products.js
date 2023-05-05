@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
 const mongoose = require('mongoose');
+// const { result } = require('lodash');
 
 router.get('/', (req, res, next) => {
   Product.find()
@@ -137,10 +138,6 @@ router.delete('/:productId', async (req, res, next) => {
   } else {
     console.log('Id Not Found');
   }
-
-  // res.status(200).json({
-  //   message: 'Product has been Deleted',
-  // });
 });
 
 module.exports = router;

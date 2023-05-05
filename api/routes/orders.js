@@ -35,7 +35,7 @@ const ObjectId = mongoose.Types.ObjectId;
 router.post('/', (req, res, next) => {
   // Ensure a valid ObjectId is provided
   if (!ObjectId.isValid(req.body.product)) {
-    return res.status(400).json({ message: "Invalid product ID" });
+    return res.status(400).json({ message: 'Invalid product ID' });
   }
 
   const productId = new ObjectId(req.body.product);
@@ -47,13 +47,12 @@ router.post('/', (req, res, next) => {
           message: 'Product not Found',
         });
       }
-      // Create a new instance of the Order model
-      const order = new Order({
+      const order = {
         _id: new mongoose.Types.ObjectId(),
         quantity: req.body.quantity,
-        product: productId,
-      });
-      return order.save().then((result) => {
+        product: req.body.productId,
+      };
+      return Order.create(order).then((result) => {
         res.status(201).json({
           message: 'Order Has Been Created',
           createdOrder: {
@@ -75,8 +74,6 @@ router.post('/', (req, res, next) => {
       });
     });
 });
-
-
 
 router.get('/:orderId', (req, res, next) => {
   const id = req.params.orderId;
