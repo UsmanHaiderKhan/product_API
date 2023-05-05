@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
@@ -9,9 +10,10 @@ const storage = multer.diskStorage({
     cb(null, './uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname);
+    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
   },
 });
+
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
     cb(null, true);
