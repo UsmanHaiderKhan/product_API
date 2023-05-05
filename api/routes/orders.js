@@ -80,7 +80,7 @@ router.get('/:orderId', (req, res, next) => {
   Order.findById(id)
     .exec()
     .then((order) => {
-      if (!id) {
+      if (!order) {
         return res.status(404).json({
           message: `Order Against this Id : ${id} not Found`,
         });
@@ -101,30 +101,42 @@ router.get('/:orderId', (req, res, next) => {
 });
 
 router.patch('/:orderId', (req, res, next) => {
-  Order.remove({ _id: id })
+  const id = req.params.orderId;
+  Product.findByIdAndUpdate(id, req.body)
     .exec()
-    .then((result) => {
+    .then(() => {
       res.status(200).json({
-        message: 'Order Has Been Deleted SuccessFully',
+        message: 'Order has been Updated',
         request: {
-          type: 'DELETE',
-          url: 'http://localhost:3000/orders/' + result._id,
-          body: { productId: 'ID', quantity: 'Number' },
+          type: 'PATCH',
+          url: 'http://localhost:3000/Orders/' + id,
         },
       });
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json({
-        error: err.message,
+        error: err,
       });
     });
 });
 
-router.delete('/:orderId', (req, res, next) => {
-  res.status(200).json({
-    message: 'Delete Orders',
-    orderId: req.params.orderId,
-  });
+router.delete('/:orderId', async (req, res, next) => {
+  const id = req.params.orderId;
+  if (id) {
+    await Order.findByIdAndRemove({ _id: id })
+      .exec()
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        res.status(500).json({
+          error: err.message,
+        });
+      });
+  } else {
+    console.log('Id Not Found');
+  }
 });
 
 module.exports = router;
