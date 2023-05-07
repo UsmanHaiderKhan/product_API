@@ -7,9 +7,9 @@ require('./helpers/connect_mongoose');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-const productRoutes = require('./api/routes/products');
-const orderRoutes = require('./api/routes/orders');
-const userRoutes = require('./api/routes/user');
+const productRoutes = require('./api/routes/products.routes');
+const orderRoutes = require('./api/routes/orders.routes');
+const authRoutes = require('./api/routes/auth.routes');
 
 mongoose.Promise = global.Promise;
 
@@ -39,7 +39,7 @@ app.use(cors());
 // Routes Handler
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
-app.use('/user', userRoutes);
+app.use('/auth', authRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Not Found');
@@ -50,7 +50,7 @@ app.use((error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
     error: {
-      message: error.message,
+      message: error.message + '.Path not Found.',
     },
   });
 });
