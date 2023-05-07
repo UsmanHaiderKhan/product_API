@@ -51,7 +51,7 @@ module.exports = {
         const order = {
           _id: new mongoose.Types.ObjectId(),
           quantity: req.body.quantity,
-          product: req.body.productId,
+          product: req.body.product,
         };
         return Order.create(order).then((result) => {
           res.status(201).json({
@@ -81,6 +81,7 @@ module.exports = {
   getOrderById: (req, res, next) => {
     const id = req.params.orderId;
     Order.findById(id)
+      .populate('product')
       .exec()
       .then((order) => {
         if (!order) {
