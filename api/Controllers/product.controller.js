@@ -102,41 +102,25 @@ module.exports = {
 
   // PATCH : Update the Product By Id
 
-  updateProductById: (req, res, next) => {
+  updateProductById: async (req, res, next) => {
     const id = req.params.productId;
-    console.log('ID REocrd:' + req.body);
-    // const updateOps = {};
-    // for (const ops of req.body) {
-    //   updateOps[ops.propName] = ops.value;
-    // }
-    Product.findByIdAndUpdate(
-      id,
-      req.body
-      // { _id: id },
-      // {
-      //   $set: {
-      //     name: req.body.name,
-      //     price: req.body.price,
-      //     productImage: req.body.productImage,
-      //   },
-      // }
-    )
-      .exec()
-      .then(() => {
-        res.status(200).json({
-          message: 'Product has been Updated',
-          request: {
-            type: 'PATCH',
-            url: 'http://localhost:3000/products/' + id,
-          },
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).json({
-          error: err,
-        });
-      });
+    const product = await Product.findByIdAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          name: req.body.name,
+          price: req.body.price,
+          productImage: req.body.productImage,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(200).json({
+      updatedProduct: product,
+    });
   },
 
   // DELETE : delete product by Id
