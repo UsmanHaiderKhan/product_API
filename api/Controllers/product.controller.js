@@ -6,16 +6,20 @@ module.exports = {
   // GET : Get All the Product
 
   getAllProducts: (req, res, next) => {
-    Product.find()
+    // const query = req.query;
+    // const queryPrice = req.query.price;
+
+    Product.find(req.query)
       .exec()
       .then((docs) => {
         const response = {
           count: docs.length,
           products: docs.map((doc) => {
             return {
+              _id: doc._id,
               name: doc.name,
               price: doc.price,
-              _id: doc._id,
+              productImage: doc.productImage,
               request: {
                 type: 'GET',
                 url: 'http://localhost:3000/products/' + doc._id,
@@ -56,6 +60,7 @@ module.exports = {
           createdProduct: {
             name: result.name,
             price: result.price,
+            productImage: result.productImage,
             _id: result._id,
             request: {
               type: 'GET',
@@ -76,6 +81,7 @@ module.exports = {
   // GET : Get Product By Id
 
   getProductById: (req, res, next) => {
+    // return;
     const id = req.params.productId;
     Product.findById(id)
       .select('name price productImage _id')
