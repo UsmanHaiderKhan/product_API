@@ -4,6 +4,36 @@ const jwt = require('jsonwebtoken');
 const Auth = require('../models/auth.model');
 
 module.exports = {
+  // GET ALL :  Users Details
+
+  getAllUsers: (req, res, next) => {
+    Auth.find({})
+      .exec()
+      .then((docs) => {
+        const response = {
+          count: docs.length,
+          users: docs.map((doc) => {
+            return {
+              _id: doc._id,
+              email: doc.email,
+              password: doc.password,
+
+              request: {
+                type: 'GET',
+                url: 'http://localhost:3000/users/' + doc._id,
+              },
+            };
+          }),
+        };
+        res.status(200).json(response);
+      })
+      .catch((err) => {
+        res.status(400).json({
+          error: err,
+        });
+      });
+  },
+
   // POST : Create New User
 
   createNewUser: (req, res, next) => {
