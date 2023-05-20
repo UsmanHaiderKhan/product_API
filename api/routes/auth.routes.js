@@ -4,6 +4,8 @@ const checkAuth = require('../middleware/auth');
 
 const AuthController = require('../Controllers/auth.controller');
 
+router.post('/users', AuthController.getAllUsers);
+
 router.post('/signup', AuthController.createNewUser);
 
 router.post('/login', AuthController.loggedIn);
